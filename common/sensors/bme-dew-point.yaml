@@ -1,0 +1,12 @@
+platform: template
+name: Dew Point
+id: dew_point
+internal: true
+lambda: |-
+  return (243.5*(log(id(bme280_humid).state/100)+((17.67*id(bme280_temp).state)/
+  (243.5+id(bme280_temp).state)))/(17.67-log(id(bme280_humid).state/100)-
+  ((17.67*id(bme280_temp).state)/(243.5+id(bme280_temp).state))));
+unit_of_measurement: °C
+icon: 'mdi:thermometer-alert'
+state_class: "measurement"
+update_interval: $sensor_interval

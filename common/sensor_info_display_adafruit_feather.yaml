@@ -1,0 +1,55 @@
+platform: st7789v
+model: Adafruit S2 TFT FEATHER 240X135
+power_supply: tft_pwr_en
+id: thedisplay
+rotation: 90
+lambda: |-
+pages:
+  - id: page1
+    lambda: |-
+      int x, y;
+      x = 23, y = 20;
+      it.rectangle(0,  0, it.get_width(), it.get_height(), id(COLOR_CSS_POWDERBLUE));
+      it.rectangle(0, 24, it.get_width(), it.get_height(), id(COLOR_CSS_POWDERBLUE));
+      it.print(120, 11, id(f18), id(COLOR_CSS_TOMATO), TextAlign::CENTER, "bäärgsiitsch");
+      
+      it.image(0, 28, id(logo_image));
+
+  - id: page2
+    lambda: |-
+      int x, y;
+      x = 23, y = 20;
+      it.rectangle(0,  0, it.get_width(), it.get_height(), id(COLOR_CSS_POWDERBLUE));
+      it.rectangle(0, 24, it.get_width(), it.get_height(), id(COLOR_CSS_POWDERBLUE));
+      it.print(120, 11, id(f18), id(COLOR_CSS_TOMATO), TextAlign::CENTER, "bäärgsiitsch");
+
+      it.strftime((240 / 2), (135 / 3) * 1 + 5, id(f24), id(COLOR_CSS_IVORY), TextAlign::CENTER, "%Y-%m-%d", id(esptime).now());
+      it.strftime((240 / 2), (135 / 3) * 2 + 5, id(f48), id(COLOR_CSS_IVORY), TextAlign::CENTER, "%H:%M:%S", id(esptime).now());
+
+
+  - id: page3
+    lambda: |-
+      int x, y;
+      x = 23, y = 20;
+      it.rectangle(0,  0, it.get_width(), it.get_height(), id(COLOR_CSS_POWDERBLUE));
+      it.rectangle(0, 24, it.get_width(), it.get_height(), id(COLOR_CSS_POWDERBLUE));
+      it.print(120, 11, id(f18), id(COLOR_CSS_TOMATO), TextAlign::CENTER, "bäärgsiitsch");
+
+      it.print(5, (135 / 7) * 1 + 5, id(f18), id(COLOR_CSS_LIGHTSKYBLUE), TextAlign::LEFT, "Average"); //id(pplhome).state.c_str()
+      it.printf(5, (135 / 7) * 2 + 5, id(f18), id(COLOR_CSS_NAVAJOWHITE), "%.1f°F", id(avgoutsidetemp).state);
+      it.printf(5, (135 / 7) * 3 + 5, id(f18), id(COLOR_CSS_NAVAJOWHITE), "%.1f%%", id(avgoutsidehumid).state);
+      //it.printf(5, (135 / 7) * 4 + 5, id(f18), id(COLOR_CSS_NAVAJOWHITE), "%.0f aqi", id(purpleairpm25aqi).state);
+      //it.printf(5, (135 / 7) * 5 + 5, id(f18), id(COLOR_CSS_NAVAJOWHITE), "%.0fµg/m³", id(kitchenavgpm25).state);  //not done
+
+      it.print((240 / 3) * 1 + 5, (135 / 7) * 1 + 5, id(f18), id(COLOR_CSS_LIGHTSKYBLUE), TextAlign::LEFT, "Local"); //id(pplhome).state.c_str()
+      it.printf((240 / 3) * 1 + 5, (135 / 7) * 2 + 5, id(f18), id(COLOR_CSS_BURLYWOOD), "%.1f°F", id(temp).state); //not done
+      it.printf((240 / 3) * 1 + 5, (135 / 7) * 3 + 5, id(f18), id(COLOR_CSS_BURLYWOOD), "%.1f%%", id(humid).state); //not done
+      it.printf((240 / 3) * 1 + 5, (135 / 7) * 4 + 5, id(f18), id(COLOR_CSS_BURLYWOOD), "%.0f aqi", id(humid).state); //not done
+      it.printf((240 / 3) * 1 + 5, (135 / 7) * 5 + 5, id(f18), id(COLOR_CSS_BURLYWOOD), "%.0fµg/m³", id(humid).state); //not done
+
+      it.print((240 / 3) * 2 + 5, (135 / 7) * 1 + 5, id(f18), id(COLOR_CSS_LIGHTSKYBLUE), TextAlign::LEFT, "Forecast"); //id(pplhome).state.c_str()
+      it.printf((240 / 3) * 2 + 5, (135 / 7) * 2 + 5, id(f18), id(COLOR_CSS_BISQUE), "%.1f°F", id(openwxtemp).state);
+      it.printf((240 / 3) * 2 + 5, (135 / 7) * 3 + 5, id(f18), id(COLOR_CSS_BISQUE), "%.1f%%", id(openwxhumid).state);
+      it.printf((240 / 3) * 2 + 5, (135 / 7) * 4 + 5, id(f18), id(COLOR_CSS_BISQUE), "%.0f aqi", id(purpleaqiforecast).state);
+      it.printf((240 / 3) * 2 + 5, (135 / 7) * 5 + 5, id(f18), id(COLOR_CSS_BISQUE), "%.0fµg/m³", id(purpleairpm25).state);
+

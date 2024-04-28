@@ -1,0 +1,104 @@
+---
+api:
+  services:
+    - service: set_remote_temperature
+      variables:
+        temperature: float
+      then:
+        - lambda: 'id(splitunit).set_remote_temperature(temperature);'
+
+    - service: use_internal_temperature
+      then:
+        - lambda: 'id(splitunit).set_remote_temperature(0);'
+  encryption:
+    key: !secret api_key_1
+  reboot_timeout: 2min
+
+binary_sensor:
+  - platform: gpio
+    pin: 
+      number: 0
+      inverted: true
+    name: Button
+
+external_components:
+  - source: github://echavet/MitsubishiCN105ESPHome@main
+    #github://disruptivepatternmaterial/MitsubishiCN105ESPHome
+    #
+    refresh: 1s
+
+uart:
+  id: HP_UART
+  baud_rate: 2400
+  tx_pin: 15
+  rx_pin: 13
+
+climate:
+  - platform: cn105
+    name: ${friendlyname}
+    id: splitunit
+    update_interval: 2s
+    compressor_frequency_sensor:
+      name: Compressor Frequency
+    vertical_vane_select:
+      name: Vertical Vane Orientation
+    remote_temperature_timeout: 30min  
+    debounce_delay : 500ms
+    stage_sensor:
+      name: Stage Sensor
+    sub_mode_sensor:
+      name: Sub Mode Sensor     
+    auto_sub_mode_sensor:
+      name: Auto Sub Mode Sensor
+      
+sensor:
+  - platform: homeassistant
+    name: Remote Temperature
+    id: room_temperature
+    entity_id: ${remote_temp_sensor}
+    on_value:
+      then:
+        #- lambda: 'id(splitunit).set_remote_temperature(x);'
+        - lambda: 'id(splitunit).set_remote_temperature((x-32.0) * 5.0/9.0);'
+
+  - !include sensors/wifi_sensor_db.yaml
+  - !include sensors/wifi_sensor_percent.yaml
+
+button:
+  - platform: restart
+    name: Restart
+
+light:
+  - platform: esp32_rmt_led_strip
+    rgb_order: GRB
+    pin: GPIO21
+    num_leds: 1
+    rmt_channel: 0
+    chipset: SK6812
+    name: "ID LED"
+    restore_mode: ALWAYS_OFF
+
+logger:    
+  level: DEBUG
+  logs:
+    EVT_SETS : INFO
+    WIFI : INFO
+    MQTT : INFO
+    WRITE_SETTINGS : INFO
+    SETTINGS : INFO
+    STATUS : INFO
+    CN105Climate: WARN
+    CN105: INFO
+    climate: WARN
+    sensor: WARN
+    chkSum : INFO
+    WRITE : INFO
+    READ : INFO
+    ACK : INFO
+    Header: INFO
+    Decoder : INFO
+    CONTROL_WANTED_SETTINGS: INFO   
+
+#switch:
+#  - platform: factory_reset
+#    name: Restart with Factory Default Settings

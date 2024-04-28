@@ -1,0 +1,11 @@
+platform: wifi_info
+ip_address:
+  name: IP Address
+ssid:
+  name: Connected SSID
+bssid:
+  name: Connected BSSID
+mac_address:
+  name: Mac Wifi Address
+dns_address:
+  name: DNS Address

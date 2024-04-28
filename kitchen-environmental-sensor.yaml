@@ -1,0 +1,207 @@
+substitutions:
+  devicename: KitchenEnvSen
+  hostname: kitchen-env-sensor
+  friendlyname: Kitchen Environmental Sensor
+  location: Inside
+  floor: 1stfloor
+  room: Kitchen
+  i2c_bus_a_sda: GPIO11
+  i2c_bus_a_scl: GPIO12
+  sensor_interval: 15s
+  mqtt_interval: 30s
+
+esphome:
+  name: ${hostname}
+  friendly_name: ${friendlyname}  
+  area: ${room}
+  comment: Kitchen Stamp AirQ
+  includes: common/sensors/pm25_to_aqi_us.h
+  platformio_options:
+    board_build.mcu: esp32s3
+    board_build.name: "M5Stack StampS3"
+    board_build.upload.flash_size: 8MB
+    board_build.upload.maximum_size: 8388608
+    board_build.vendor: M5Stack
+    upload_flash_size: 8MB
+    upload_maximum_ram_size: 327680
+    upload_maximum_size: 8388608
+    upload_speed: 460800
+  on_boot:
+  - priority: 800
+    then:
+      - output.turn_on: enable
+  - priority: 800
+    then:
+      - pcf8563.read_time
+
+output:
+  - platform: gpio
+    pin: GPIO10
+    id: enable
+
+esp32:
+  board: esp32-s3-devkitc-1 #m5stack-stamps3 m5stack-stamps3 
+  variant: esp32s3
+  framework:
+    type: arduino
+
+<<: !include common/api.yaml
+<<: !include common/ota.yaml
+<<: !include common/logger.yaml
+<<: !include common/web_server.yaml
+<<: !include common/wifi.yaml
+<<: !include common/packages.yaml
+<<: !include common/i2c.yaml
+#<<: !include common/mqtt.yaml
+<<: !include common/time-pcf8563.yaml
+<<: !include common/fonts.yaml
+<<: !include common/sensor_display_airq.yaml
+<<: !include common/led_status_m5_stamp.yaml
+
+text_sensor:
+  - !include common/sensors/wifi_text_sensors.yaml
+  - !include common/sensors/location_text_sensor.yaml
+  - !include common/sensors/floor_text_sensor.yaml
+  - !include common/sensors/room_text_sensor.yaml
+  - !include common/sensors/voc-iaq-text.yaml
+  - !include common/sensors/nox-iaq-text.yaml
+
+sensor:
+  - !include common/sensors/scd4x.yaml
+  - !include common/sensors/wifi_sensor_db.yaml
+  - !include common/sensors/wifi_sensor_percent.yaml 
+  - !include common/sensors/aqi-pm2_5.yaml
+  - !include common/sensors/aqi-pm10_0.yaml
+  - !include common/sensors/sen55.yaml
+
+
+  - platform: template
+    name: Temperature
+    id: temp
+    lambda: |-
+      return (( id(sen55_temp).state + id(CO2_temp).state ) / 2) - id(temperature_offset).state;
+    unit_of_measurement: "°C"
+    icon: "mdi:thermometer"
+    device_class: "temperature"
+    state_class: "measurement"
+    update_interval: $sensor_interval
+    accuracy_decimals: 2
+
+  - platform: template
+    name: Temperature F
+    id: temp_f
+    lambda: |-
+      return id(temp).state * (9.0/5.0) + 32.0;
+    unit_of_measurement: "°F"
+    icon: "mdi:thermometer"
+    device_class: "temperature"
+    state_class: "measurement"
+    update_interval: $sensor_interval
+    internal: true
+    accuracy_decimals: 2
+
+  - platform: template
+    name: Humidity
+    id: humid
+    lambda: |-
+      return (( id(sen55_humid).state + id(CO2_humid).state ) / 2) - id(humidity_offset).state;
+    unit_of_measurement: "%"
+    icon: "mdi:water-percent"
+    device_class: "humidity"
+    state_class: "measurement"    
+    update_interval: $sensor_interval
+    accuracy_decimals: 2
+
+spi:
+  clk_pin: GPIO05
+  mosi_pin: GPIO06 
+
+binary_sensor:
+  - platform: gpio
+    name: Button A
+    pin:
+      number: GPIO0
+      ignore_strapping_warning: true
+      mode:
+        input: true
+      inverted: true
+    on_press:
+      then:
+        - component.update: disp
+      
+  - platform: gpio
+    pin:
+      number: GPIO08
+      mode:
+        input: true
+        pullup: true
+      inverted: true
+    name: Button B
+    
+  - platform: gpio
+    pin:
+      number: GPIO46
+      ignore_strapping_warning: true
+    name: Button Hold
+
+  - platform: gpio
+    pin: GPIO42
+    name: Button Power
+
+button:
+  - platform: restart
+    name: Restart
+    
+  - platform: template
+    name: "CO2 Force Manual Calibration"
+    entity_category: "config"
+    on_press:
+      then:
+        - scd4x.perform_forced_calibration:
+            value: !lambda 'return id(co2_cal).state;'
+
+  - platform: template
+    name: "SEN55 Force Manual Clean"
+    entity_category: "config"
+    on_press:
+      then:
+        - sen5x.start_fan_autoclean: sen55
+
+number:
+  - platform: template
+    name: "CO2 Calibration Value"
+    optimistic: true
+    min_value: 400
+    max_value: 1000
+    step: 5
+    id: co2_cal
+    icon: "mdi:molecule-co2"
+    entity_category: "config"
+
+  - platform: template
+    name: Humidity Offset
+    id: humidity_offset
+    restore_value: true
+    initial_value: 0.0
+    min_value: -70.0
+    max_value: 70.0
+    entity_category: "CONFIG"
+    unit_of_measurement: "%"
+    optimistic: true
+    update_interval: never
+    step: 0.1
+    mode: box
+
+  - platform: template
+    name: Temperature Offset
+    id: temperature_offset
+    restore_value: true
+    initial_value: 0.0
+    min_value: -70.0
+    max_value: 70.0
+    entity_category: "CONFIG"
+    unit_of_measurement: "°C"
+    optimistic: true
+    update_interval: never
+    step: 0.1
+    mode: box  

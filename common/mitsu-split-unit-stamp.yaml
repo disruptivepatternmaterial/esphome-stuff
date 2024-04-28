@@ -1,0 +1,69 @@
+---
+api:
+  services:
+    - service: ping
+      then:
+        - lambda: 'id(splitunit).ping();'
+  encryption:
+    key: !secret api_key_1
+  reboot_timeout: 5min
+
+binary_sensor:
+  - platform: gpio
+    pin: 
+      number: 0
+      inverted: true
+    name: Button
+
+external_components:
+  - source: github://wrouesnel/esphome-mitsubishiheatpump
+    refresh: 0s
+
+climate:
+  - platform: mitsubishi_heatpump
+    id: splitunit
+    name: ${friendlyname}
+    hardware_uart: UART1
+    baud_rate: 2400
+    update_interval: 500ms
+    visual:
+      min_temperature: 18
+      max_temperature: 26
+      temperature_step: .5
+    remote_temperature_operating_timeout_minutes: 60
+    remote_temperature_idle_timeout_minutes: 120
+    remote_temperature_ping_timeout_minutes: 20
+    rx_pin: 13
+    tx_pin: 15
+    vertical_vane_select:
+      name: Vertical Vane
+    supports:
+      swing_mode: ['OFF', 'VERTICAL']
+
+sensor:
+  - platform: homeassistant
+    name: Remote Temperature
+    id: room_temperature
+    entity_id: ${remote_temp_sensor}
+    on_value:
+      then:
+        #- lambda: 'id(splitunit).set_remote_temperature(x);'
+        - lambda: 'id(splitunit).set_remote_temperature((x-32.0) * 5.0/9.0);'
+
+
+  - !include sensors/wifi_sensor_db.yaml
+  - !include sensors/wifi_sensor_percent.yaml
+
+button:
+  - platform: restart
+    name: Restart
+
+light:
+  - platform: esp32_rmt_led_strip
+    rgb_order: GRB
+    pin: GPIO21
+    num_leds: 1
+    rmt_channel: 0
+    chipset: SK6812
+    name: "ID LED"
+    restore_mode: ALWAYS_ON

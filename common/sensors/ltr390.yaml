@@ -1,0 +1,16 @@
+platform: ltr390
+uv_index:
+  name: UV Index
+  id: uv
+uv:
+  name: "UV Sensor Counts"
+  id: uvcounts
+light:
+  name: Light
+  id: light
+  internal: true
+ambient_light:
+  name: Light Sensor Counts
+  id: ambientlight
+update_interval: $sensor_interval
+resolution: 18

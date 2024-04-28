@@ -1,0 +1,4 @@
+platform: template
+name: Room
+lambda: return {"${room}"};
+entity_category: diagnostic

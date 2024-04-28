@@ -1,0 +1,27 @@
+platform: bme280_i2c
+temperature:
+  name: BME280 Temperature
+  id: bme280_temp
+  internal: true
+  filters:
+    - lambda: |-
+        float MIN_VALUE = -40.0;
+        float MAX_VALUE = 100.0;
+        if (MIN_VALUE <= x && x <= MAX_VALUE) return x;
+        else return {};      
+pressure:
+  name: "BME280 Pressure"
+  id: bme280_pressure
+  internal: true
+humidity:
+  name: BME280 Humidity
+  id: bme280_humid
+  internal: true
+  filters:
+    - lambda: |-
+        float MIN_VALUE = 0.0;
+        float MAX_VALUE = 100.0;
+        if (MIN_VALUE <= x && x <= MAX_VALUE) return x;
+        else return {};       
+address: 0x76
+update_interval: $sensor_interval

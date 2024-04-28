@@ -1,0 +1,16 @@
+---
+time:
+  - platform: pcf8563
+    address: 0x51
+    # repeated synchronization is not necessary unless the external RTC
+    # is much more accurate than the internal clock
+    update_interval: 15min
+  - platform: sntp
+    id: sntp_time
+    servers:
+      - 192.168.50.5
+      - 192.168.50.6
+    on_time_sync:
+      then:
+        # ... and update the RTC when the synchronization was successful
+        pcf8563.write_time:

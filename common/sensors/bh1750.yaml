@@ -1,0 +1,12 @@
+platform: bh1750
+name: Illuminance
+id: lux
+address: 0x23
+update_interval: $sensor_interval
+internal: true
+filters:
+  - lambda: |-
+      float MIN_VALUE = 0.0;
+      float MAX_VALUE = 10000.0;
+      if (MIN_VALUE <= x && x <= MAX_VALUE) return x;
+      else return {};  

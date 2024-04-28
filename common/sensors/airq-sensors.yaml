@@ -1,0 +1,166 @@
+---
+sensor:
+  - platform: template
+    name: PM1.0
+    id: zphs01b_pm1
+    unit_of_measurement: ug/m3
+    device_class: PM1
+    accuracy_decimals: 3
+    lambda: "return {};"
+    state_class: measurement
+
+  - name: PM2.5
+    platform: template
+    id: zphs01b_pm25
+    unit_of_measurement: ug/m3
+    device_class: PM25
+    accuracy_decimals: 3
+    lambda: "return {};"
+    state_class: measurement
+
+  - name: PM10.0
+    platform: template
+    id: zphs01b_pm10
+    device_class: PM10
+    unit_of_measurement: ug/m3
+    accuracy_decimals: 3
+    lambda: "return {};"
+    state_class: measurement
+
+  - platform: template
+    name: AQI PM 2.5
+    id: aqi2_5
+    lambda: |-
+      double aqi_2_5_us = 0.0;
+      aqi_2_5_us = pm25_to_aqi_us(id(zphs01b_pm25).state); 
+      return aqi_2_5_us;
+    device_class: "aqi"
+    state_class: "measurement"    
+    update_interval: $sensor_interval
+    accuracy_decimals: 2
+
+  - platform: template
+    name: AQI PM 10.0
+    id: aqi10_0
+    lambda: |-
+      double aqi_10_0_us = 0.0;
+      aqi_10_0_us = pm100_to_aqi_us(id(zphs01b_pm10).state); 
+      return aqi_10_0_us;
+    device_class: "aqi"
+    state_class: "measurement"    
+    update_interval: $sensor_interval
+    accuracy_decimals: 2
+
+  - name: CO2
+    platform: template
+    id: zphs01b_co2
+    unit_of_measurement: ppm
+    device_class: carbon_dioxide
+    accuracy_decimals: 3
+    lambda: "return {};"
+    state_class: measurement
+
+  - name: TVOC
+    platform: template
+    id: zphs01b_voc
+    unit_of_measurement: grades
+    device_class: VOLATILE_ORGANIC_COMPOUNDS
+    accuracy_decimals: 3
+    lambda: "return {};"
+    state_class: measurement
+
+  - name: Temperature
+    platform: template
+    id: zphs01b_temp
+    unit_of_measurement: "°C"
+    device_class: temperature
+    accuracy_decimals: 3
+    lambda: "return {};"
+    state_class: measurement
+    filters:
+      - calibrate_linear:
+         datapoints:
+          # Map 0.0 (from sensor) to 1.0 (true value)
+          - 0.0 -> 0.0
+          - 19.4 -> 20.5
+
+  - name: Humidity
+    platform: template
+    id: zphs01b_hum
+    unit_of_measurement: "%"
+    device_class: humidity
+    accuracy_decimals: 3
+    lambda: "return {};"
+    state_class: measurement
+    filters:
+      - calibrate_linear:
+         datapoints:
+          # Map 0.0 (from sensor) to 1.0 (true value)
+          - 0.0 -> 0.0
+          - 61.0 -> 47.1
+
+  - name: Formaldehyde
+    platform: template
+    id: zphs01b_ch2o
+    unit_of_measurement: grades
+    device_class: volatile_organic_compounds_parts
+    accuracy_decimals: 3
+    lambda: "return {};"
+    state_class: measurement
+
+  - name: CO
+    platform: template
+    id: zphs01b_co
+    unit_of_measurement: ppm
+    device_class: carbon_monoxide
+    accuracy_decimals: 3
+    lambda: "return {};"
+    state_class: measurement
+
+  - name: O3
+    platform: template
+    id: zphs01b_o3
+    unit_of_measurement: ppm
+    device_class: ozone
+    accuracy_decimals: 3
+    lambda: "return {};"
+    state_class: measurement
+
+  - name: NO2
+    platform: template
+    id: zphs01b_no2
+    unit_of_measurement: ppm
+    device_class: nitrogen_dioxide
+    accuracy_decimals: 3
+    lambda: "return {};"
+    state_class: measurement
+
+  - name: CO_8_Hr_Avg
+    platform: template
+    id: zphs01b_co_8_hr_avg
+    lambda: |-
+      return (id(zphs01b_co).state );
+    update_interval: 60s
+    filters:
+      - sliding_window_moving_average:
+          window_size: 480
+
+  - name: O3_8_Hr_Avg
+    platform: template
+    id: zphs01b_o3_1_hr_avg
+    lambda: |-
+      return (id(zphs01b_o3).state );
+    update_interval: 60s
+    filters:
+      - sliding_window_moving_average:
+          window_size: 60
+
+  - name: CO_1_Hr_Avg
+    platform: template
+    id: zphs01b_co_1_hr_avg
+    lambda: |-
+      return (id(zphs01b_co).state );
+    update_interval: 60s
+    filters:
+      - sliding_window_moving_average:
+          window_size: 60

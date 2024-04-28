@@ -1,0 +1,23 @@
+platform: template
+name: "VOC IAQ Classification"
+id: iaq_voc
+icon: "mdi:checkbox-marked-circle-outline"
+lambda: |-
+  if (int(id(voc).state) < 100.0) {
+    return {"Improving"};
+  }
+  else if (int(id(voc).state) <= 200.0) {
+    return {"Good"};
+  }
+  else if (int(id(voc).state) <= 300.0) {
+    return {"Lightly Polluted"};
+  }
+  else if (int(id(voc).state) <= 400.0) {
+    return {"Moderately Polluted"};
+  }
+  else if (int(id(voc).state) <= 500.0) {
+    return {"Heavily Polluted"};
+  }
+  else {
+    return {"unknown"};
+  }

@@ -1,0 +1,59 @@
+platform: sps30
+update_interval: $sensor_interval
+auto_cleaning_interval: 48hours
+id: particulate
+pm_1_0:
+  name: PM <1µm Weight Concentration
+  id: PM_1_0
+  filters:
+    - lambda: |-
+        float MIN_VALUE = 0.0;
+        float MAX_VALUE = 500.0;
+        if (MIN_VALUE <= x && x <= MAX_VALUE) return x;
+        else return {};        
+pm_2_5:
+  name: PM <2.5µm Weight Concentration
+  id: PM_2_5
+  filters:
+    - lambda: |-
+        float MIN_VALUE = 0.0;
+        float MAX_VALUE = 500.0;
+        if (MIN_VALUE <= x && x <= MAX_VALUE) return x;
+        else return {};           
+pm_4_0:
+  name: PM <4µm Weight Concentration
+  id: PM_4_0
+  filters:
+    - lambda: |-
+        float MIN_VALUE = 0.0;
+        float MAX_VALUE = 500.0;
+        if (MIN_VALUE <= x && x <= MAX_VALUE) return x;
+        else return {};           
+pm_10_0:
+  name: PM <10µm Weight Concentration
+  id: PM_10_0
+  filters:
+    - lambda: |-
+        float MIN_VALUE = 0.0;
+        float MAX_VALUE = 500.0;
+        if (MIN_VALUE <= x && x <= MAX_VALUE) return x;
+        else return {};           
+pmc_0_5:
+  name: PM <0.5µm Number Concentration
+  id: PMC_0_5
+pmc_1_0:
+  name: PM <1µm Number Concentration
+  id: PMC_1_0
+pmc_2_5:
+  name: PM <2.5µm Number Concentration
+  id: PMC_2_5
+pmc_4_0:
+  name: PM <4µm Number Concentration
+  id: PMC_4_0
+pmc_10_0:
+  name: PM <10µm Number Concentration
+  id: PMC_10_0
+pm_size:
+  name: Typical Particle Size
+  id: PM_Size
+address: 0x69

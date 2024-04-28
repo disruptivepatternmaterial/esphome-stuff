@@ -1,0 +1,8 @@
+mqtt:
+  broker: mqtt.tableman.com
+  port: 1883
+  id: mqtt_client
+  discovery: False
+  discovery_retain: False
+  discovery_prefix: homeassistant
+  topic_prefix: esphome/sensors/${devicename}

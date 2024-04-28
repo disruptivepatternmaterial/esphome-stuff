@@ -1,0 +1,269 @@
+interval:
+  - interval: $mqtt_interval
+    then:
+      - mqtt.publish_json:
+            topic: baargsiitsch/environment/$location/$floor/$room/$devicename/display
+            payload: |-
+              root["Sensorname"] = "$devicename";
+              root["PM10"] = id(PM_1_0).state;
+              root["PM25"] = id(PM_2_5).state;
+              root["PM40"] = id(PM_4_0).state;
+              root["PM100"] = id(PM_10_0).state;
+              root["Particles .5um"] = id(PMC_0_5).state;
+              root["Particles 1.0um"] = id(PMC_1_0).state;
+              root["Particles 2.5um"] = id(PMC_2_5).state;
+              root["Particles 4.0um"] = id(PMC_4_0).state;
+              root["Particles 10.0um"] = id(PMC_10_0).state; 
+              root["Particles Average um"] = id(PM_Size).state;
+              if (id(aqi2_5).has_state()) {
+                root["AQI2_5"] = id(aqi2_5).state;
+              }
+              if (id(aqi10_0).has_state()) {
+                root["AQI10_0"] = id(aqi10_0).state;
+              }
+
+
+interval:
+  - interval: $mqtt_interval
+    then:
+      - mqtt.publish_json:
+            topic: baargsiitsch/environment/Inside/2ndfloor/Office/AirMonitorOffice/display
+            payload: |-
+              root["Temperature_C"] = id(temp).state;
+              root["Temperature_F"] = id(temp).state * (9.0/5.0) + 32.0;
+              root["Sensorname"] = "office-air-sensor";
+              root["CO2"] = id(CO2).state;
+              root["Humidity"] = id(CO2_humid).state;
+              root["Illuminance"] = id(illuminance).state;
+              if (id(vox).has_state()) {
+                root["VOC"] = id(vox).state;
+              }
+
+
+interval:
+  - interval: $mqtt_interval
+    then:
+      - mqtt.publish_json:
+            topic: baargsiitsch/environment/$location/$floor/$room/$devicename/display
+            payload: |-
+              root["Temperature_C"] = id(temp).state;
+              root["Temperature_F"] = id(temp).state * (9.0/5.0) + 32.0;
+              root["Sensorname"] = "$devicename";
+              root["CO2"] = id(CO2).state;
+              root["Humidity"] = id(humid).state;
+              root["Dew_Point"] = id(dew_point).state;
+            
+interval:
+  - interval: $mqtt_interval
+    then:
+      - mqtt.publish_json:
+            topic: baargsiitsch/environment/$location/$floor/$room/$devicename/display
+            payload: |-
+              root["Sensorname"] = "$devicename";
+              root["Temperature_C"] = (id(temp).state);
+              root["Temperature_F"] = (id(temp).state) * (9.0/5.0) + 32.0;              
+              root["Humidity"] = id(humid).state;
+      #- deep_sleep.enter:
+      #    id: deep_sleep_1
+      #    sleep_duration: 5min
+
+interval:
+  - interval: $mqtt_interval
+    then:
+      - mqtt.publish_json:
+            topic: baargsiitsch/environment/$location/$floor/$room/$devicename/display
+            payload: |-
+              root["Sensorname"] = "$devicename";
+              root["PM10"] = id(PM_1_0).state;
+              root["PM25"] = id(PM_2_5).state;
+              root["PM40"] = id(PM_4_0).state;
+              root["PM100"] = id(PM_10_0).state;
+              root["Particles .5um"] = id(PMC_0_5).state;
+              root["Particles 1.0um"] = id(PMC_1_0).state;
+              root["Particles 2.5um"] = id(PMC_2_5).state;
+              root["Particles 4.0um"] = id(PMC_4_0).state;
+              root["Particles 10.0um"] = id(PMC_10_0).state; 
+              root["Particles Average um"] = id(PM_Size).state;
+              if (id(aqi2_5).has_state()) {
+                root["AQI2_5"] = id(aqi2_5).state;
+              }
+              if (id(aqi10_0).has_state()) {
+                root["AQI10_0"] = id(aqi10_0).state;
+              }
+
+interval:
+  - interval: $mqtt_interval
+    then:
+      - mqtt.publish_json:
+            topic: baargsiitsch/environment/$location/$floor/$room/$devicename/display
+            payload: |-
+              root["Sensorname"] = "$devicename";
+              root["PM10"] = id(PM_1_0).state;
+              root["PM25"] = id(PM_2_5).state;
+              root["PM40"] = id(PM_4_0).state;
+              root["PM100"] = id(PM_10_0).state;
+              root["Particles .5um"] = id(PMC_0_5).state;
+              root["Particles 1.0um"] = id(PMC_1_0).state;
+              root["Particles 2.5um"] = id(PMC_2_5).state;
+              root["Particles 4.0um"] = id(PMC_4_0).state;
+              root["Particles 10.0um"] = id(PMC_10_0).state; 
+              root["Particles Average um"] = id(PM_Size).state;
+              if (id(aqi2_5).has_state()) {
+                root["AQI2_5"] = id(aqi2_5).state;
+              }
+              if (id(aqi10_0).has_state()) {
+                root["AQI10_0"] = id(aqi10_0).state;
+              }
+
+  - interval: $mqtt_interval
+    then:
+      - mqtt.publish_json:
+            topic: baargsiitsch/environment/$location/$floor/$room/$devicename/display
+            payload: |-
+              root["Sensorname"] = "$devicename";
+              if (id(PM_1_0).has_state()) {
+                root["PM10"] = id(PM_1_0).state;
+                root["PM25"] = id(PM_2_5).state;
+                root["PM40"] = id(PM_4_0).state;
+                root["PM100"] = id(PM_10_0).state;
+                root["Particles .5um"] = id(PMC_0_5).state;
+                root["Particles 1.0um"] = id(PMC_1_0).state;
+                root["Particles 2.5um"] = id(PMC_2_5).state;
+                root["Particles 4.0um"] = id(PMC_4_0).state;
+                root["Particles 10.0um"] = id(PMC_10_0).state; 
+                root["Particles Average um"] = id(PM_Size).state;
+              }
+              root["Temperature_C"] = (id(CO2_temp).state);
+              root["Humidity"] = id(CO2_humidity).state;
+              root["CO2"] = id(CO2).state;
+              root["Temperature_F"] = (id(CO2_temp).state) * (9.0/5.0) + 32.0;
+              if (id(vox).has_state()) {
+                root["VOC"] = id(vox).state;
+              }
+              if (id(aqi2_5).has_state()) {
+                root["AQI2_5"] = id(aqi2_5).state;
+              }
+              if (id(aqi10_0).has_state()) {
+                root["AQI10_0"] = id(aqi10_0).state;
+              }
+
+interval:
+  - interval: $mqtt_interval
+    then:
+      - mqtt.publish_json:
+            topic: baargsiitsch/environment/$location/$floor/$room/$devicename/display
+            payload: |-
+              root["Temperature_C"] = id(CO2_temp).state;
+              root["Temperature_F"] = id(CO2_temp).state * (9.0/5.0) + 32.0;
+              root["Sensorname"] = "$devicename";
+              root["PM10"] = id(PM_1_0).state;
+              root["PM25"] = id(PM_2_5).state;
+              root["PM100"] = id(PM_10_0).state;
+              root["Particles .5um"] = id(PMC_0_5).state;
+              root["Particles 1.0um"] = id(PMC_1_0).state;
+              root["Particles 2.5um"] = id(PMC_2_5).state;
+              root["CO2"] = id(CO2).state;
+              root["Humidity"] = id(CO2_humid).state;
+              if (id(aqi2_5).has_state()) {
+                root["AQI2_5"] = id(aqi2_5).state;
+              }
+              if (id(aqi10_0).has_state()) {
+                root["AQI10_0"] = id(aqi10_0).state;
+              }
+
+  - interval: $mqtt_interval
+    then:
+      - mqtt.publish_json:
+            topic: baargsiitsch/environment/$location/$floor/$room/$devicename/display
+            payload: |-
+              root["Sensorname"] = "$devicename";
+              if (id(PM_1_0).has_state()) {
+                root["PM10"] = id(PM_1_0).state;
+                root["PM25"] = id(PM_2_5).state;
+                root["PM40"] = id(PM_4_0).state;
+                root["PM100"] = id(PM_10_0).state;
+                root["Particles .5um"] = id(PMC_0_5).state;
+                root["Particles 1.0um"] = id(PMC_1_0).state;
+                root["Particles 2.5um"] = id(PMC_2_5).state;
+                root["Particles 4.0um"] = id(PMC_4_0).state;
+                root["Particles 10.0um"] = id(PMC_10_0).state; 
+                root["Particles Average um"] = id(PM_Size).state;
+              }
+              root["Temperature_C"] = (id(CO2_temp).state);
+              root["Humidity"] = id(CO2_humidity).state;
+              root["CO2"] = id(CO2).state;
+              root["Temperature_F"] = (id(CO2_temp).state) * (9.0/5.0) + 32.0;
+              if (id(vox).has_state()) {
+                root["VOC"] = id(vox).state;
+              }
+              if (id(aqi2_5).has_state()) {
+                root["AQI2_5"] = id(aqi2_5).state;
+              }
+              if (id(aqi10_0).has_state()) {
+                root["AQI10_0"] = id(aqi10_0).state;
+              }
+
+interval:
+  - interval: $mqtt_interval
+    then:
+      - mqtt.publish_json:
+            topic: baargsiitsch/environment/$location/$floor/$room/$devicename/display
+            payload: |-
+              root["Temperature_C"] = id(temp).state;
+              root["Temperature_F"] = id(temp).state * (9.0/5.0) + 32.0;
+              root["Sensorname"] = "$devicename";
+              root["CO2"] = id(CO2).state;
+              root["Illuminance"] = id(lux).state;
+              root["UVI"] = id(UV).state;
+              root["Pressure_hPa"] = id(pres).state;
+              root["Humidity"] = id(humid).state;
+
+
+interval:
+  - interval: $mqtt_interval
+    then:
+      - mqtt.publish_json:
+            topic: baargsiitsch/environment/$location/$floor/$room/$devicename/display
+            payload: |-
+              root["Sensorname"] = "$devicename";
+              root["PM10"] = id(PM_1_0).state;
+              root["PM25"] = id(PM_2_5).state;
+              root["PM40"] = id(PM_4_0).state;
+              root["PM100"] = id(PM_10_0).state;
+              root["Particles .5um"] = id(PMC_0_5).state;
+              root["Particles 1.0um"] = id(PMC_1_0).state;
+              root["Particles 2.5um"] = id(PMC_2_5).state;
+              root["Particles 4.0um"] = id(PMC_4_0).state;
+              root["Particles 10.0um"] = id(PMC_10_0).state; 
+              root["Particles Average um"] = id(PM_Size).state;
+              if (id(aqi2_5).has_state()) {
+                root["AQI2_5"] = id(aqi2_5).state;
+              }
+              if (id(aqi10_0).has_state()) {
+                root["AQI10_0"] = id(aqi10_0).state;
+              }
+
+  - interval: $mqtt_interval
+    then:
+      - mqtt.publish_json:
+            topic: baargsiitsch/environment/$location/$floor/$room/$devicename/display
+            payload: |-
+              root["Temperature_C"] = id(CO2_temp).state;
+              root["Temperature_F"] = id(CO2_temp).state * (9.0/5.0) + 32.0;
+              root["CO2"] = id(CO2).state;
+              root["Humidity"] = id(CO2_humid).state;                            
+              root["Sensorname"] = "$devicename";
+
+
+interval:
+  - interval: $mqtt_interval
+    then:
+      - mqtt.publish_json:
+            topic: baargsiitsch/environment/$location/$floor/$room/$devicename/display
+            payload: |-
+              root["Temperature_C"] = id(temp).state;
+              root["Temperature_F"] = id(temp).state * (9.0/5.0) + 32.0;
+              root["Pressure"] = id(bme280_pressure).state;
+              root["Humidity"] = id(humid).state;
+              root["Dew_Point"] = id(dew_point).state;              
+              root["Sensorname"] = "$devicename";

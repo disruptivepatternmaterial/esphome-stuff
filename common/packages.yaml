@@ -1,0 +1,3 @@
+---
+packages:
+  colors: !include ../color/COLOR_CSS

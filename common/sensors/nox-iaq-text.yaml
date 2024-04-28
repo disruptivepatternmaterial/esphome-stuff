@@ -1,0 +1,23 @@
+platform: template
+name: "NOX IAQ Classification"
+id: iaq_nox
+icon: "mdi:checkbox-marked-circle-outline"
+lambda: |-
+  if (int(id(nox).state) < 100.0) {
+    return {"Improving"};
+  }
+  else if (int(id(nox).state) <= 200.0) {
+    return {"Good"};
+  }
+  else if (int(id(nox).state) <= 300.0) {
+    return {"Lightly Polluted"};
+  }
+  else if (int(id(nox).state) <= 400.0) {
+    return {"Moderately Polluted"};
+  }
+  else if (int(id(nox).state) <= 500.0) {
+    return {"Heavily Polluted"};
+  }
+  else {
+    return {"unknown"};
+  }

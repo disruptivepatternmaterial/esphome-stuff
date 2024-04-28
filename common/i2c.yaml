@@ -1,0 +1,7 @@
+---
+i2c:
+  sda: ${i2c_bus_a_sda}
+  scl: ${i2c_bus_a_scl}
+  scan: true
+  frequency: 50kHz
+  id: bus_a

@@ -1,0 +1,30 @@
+display:
+  - platform: waveshare_epaper
+    id: disp
+    cs_pin: GPIO04
+    dc_pin: GPIO03
+    busy_pin:
+      number: GPIO01
+      inverted: false
+    reset_pin: GPIO02
+    model: 1.54inv2
+    full_update_every: 300
+    reset_duration: 2ms
+    update_interval: 5s
+    lambda: |-
+      it.rectangle(0,  0, it.get_width(), it.get_height());
+      it.print(it.get_width()/2, 2, id(f16), TextAlign::TOP_CENTER, "bäärgsiitsch:${room}");
+
+      it.print(3, 25, id(f24), TextAlign::TOP_LEFT, "Temp: "); 
+      it.print(3, 50, id(f24), TextAlign::TOP_LEFT, "Humidity: "); 
+      it.print(3, 75, id(f24), TextAlign::TOP_LEFT, "CO2: "); 
+      it.print(3, 100, id(f24), TextAlign::TOP_LEFT, "AQI 25: "); 
+      it.print(3, 125, id(f24), TextAlign::TOP_LEFT, "AQI 100: "); 
+      it.print(3, 150, id(f24), TextAlign::TOP_LEFT, "IAQ: "); 
+
+      it.printf(it.get_width()-3, 25, id(f24), TextAlign::TOP_RIGHT, "%.1f°F", id(temp_f).state); 
+      it.printf(it.get_width()-3, 50, id(f24), TextAlign::TOP_RIGHT, "%.1f%%", id(humid).state); 
+      it.printf(it.get_width()-3, 75, id(f24), TextAlign::TOP_RIGHT, "%.0fppm", id(CO2).state); 
+      it.printf(it.get_width()-3, 100, id(f24), TextAlign::TOP_RIGHT, "%.0f", id(aqi2_5).state); 
+      it.printf(it.get_width()-3, 125, id(f24), TextAlign::TOP_RIGHT, "%.0f", id(aqi10_0).state); 
+      it.printf(it.get_width()-3, 150, id(f24), TextAlign::TOP_RIGHT, "%s", id(iaq_voc).state.c_str());

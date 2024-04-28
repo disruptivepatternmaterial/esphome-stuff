@@ -1,0 +1,24 @@
+platform: sht3xd
+temperature:
+  name: SHT3XD Temperature
+  id: sht3xd_temp
+  internal: true
+  filters:
+    - lambda: |-
+        float MIN_VALUE = -40.0;
+        float MAX_VALUE = 100.0;
+        if (MIN_VALUE <= x && x <= MAX_VALUE) return x;
+        else return {};      
+humidity:
+  name: SHT3XD Humidity
+  id: sht3xd_humid
+  internal: true
+  filters:
+    - lambda: |-
+        float MIN_VALUE = 0.0;
+        float MAX_VALUE = 100.0;
+        if (MIN_VALUE <= x && x <= MAX_VALUE) return x;
+        else return {};
+address: 0x44
+heater_enabled: false
+update_interval: $sensor_interval

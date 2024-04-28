@@ -1,0 +1,12 @@
+platform: template
+name: Altitude
+id: alt
+lambda: |-
+  const float STANDARD_SEA_LEVEL_PRESSURE = 1013.25; //in hPa, see note
+  return ((id(bme280_temp).state + 273.15) / 0.0065) *
+    (powf((STANDARD_SEA_LEVEL_PRESSURE / id(bme280_pressure).state), 0.190234) - 1); // in meter
+update_interval: $sensor_interval
+icon: 'mdi:signal'
+unit_of_measurement: 'm'
+internal: true
+state_class: "measurement"

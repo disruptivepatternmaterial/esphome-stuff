@@ -1,0 +1,20 @@
+platform: template
+name: AQI PM 2.5 EPA Smoke
+id: aqi2_5_epa_smoke
+lambda: |-
+  double aqi_2_5_epa = 0.0;
+  aqi_2_5_epa = pm25_to_aqi_us_epa(id(PM_2_5).state,id(humid).state); 
+  return aqi_2_5_epa;
+device_class: "aqi"
+state_class: "measurement"    
+update_interval: $sensor_interval
+accuracy_decimals: 2
+#filters:
+#  - lambda: |-
+#      float MIN_VALUE = 0.001;
+#      float MAX_VALUE = 550.0;
+#      if (MIN_VALUE <= x && x <= MAX_VALUE) return x;
+#  - sliding_window_moving_average:
+#      window_size: 7200
+#      send_every: 1
+#      send_first_at: 1

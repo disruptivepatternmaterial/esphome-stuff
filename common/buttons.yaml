@@ -1,0 +1,9 @@
+platform: restart
+name: Restart
+platform: template
+name: "CO2 Force Manual Calibration"
+entity_category: "config"
+on_press:
+  then:
+    - scd4x.perform_forced_calibration:
+        value: !lambda 'return id(co2_cal).state;'

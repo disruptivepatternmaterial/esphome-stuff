@@ -1,0 +1,12 @@
+---
+interval: $mqtt_interval
+then:
+  - mqtt.publish_json:
+      topic: baargsiitsch/environment/$location/$floor/$room/$devicename/display
+      payload: |-
+        root["Temperature_C"] = id(temp).state;
+        root["Temperature_F"] = id(temp).state * (9.0/5.0) + 32.0;
+        root["Pressure"] = id(bme280_pressure).state;
+        root["Humidity"] = id(humid).state;
+        root["Dew_Point"] = id(dew_point).state;              
+        root["Sensorname"] = "$devicename";

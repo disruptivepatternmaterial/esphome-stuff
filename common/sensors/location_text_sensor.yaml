@@ -1,0 +1,4 @@
+platform: template
+name: Location
+lambda: return {"${location}"};
+entity_category: diagnostic

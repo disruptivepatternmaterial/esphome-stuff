@@ -1,0 +1,6 @@
+---
+logger:
+  level: DEBUG
+  logs:
+    component: ERROR
+  baud_rate: 0

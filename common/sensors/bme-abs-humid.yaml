@@ -1,0 +1,8 @@
+platform: absolute_humidity
+name: Absolute Humidity
+temperature: bme280_temp
+humidity: bme280_humid
+state_class: "measurement"
+id: abs_humid
+internal: true
+#update_interval: $sensor_interval

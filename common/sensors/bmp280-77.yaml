@@ -1,0 +1,18 @@
+platform: bmp280
+temperature:
+  name: BMP280 Temperature
+  id: bmp280_temp
+  oversampling: 16x
+  internal: true
+  filters:
+    - lambda: |-
+        float MIN_VALUE = -40.0;
+        float MAX_VALUE = 100.0;
+        if (MIN_VALUE <= x && x <= MAX_VALUE) return x;
+        else return {};     
+pressure:
+  name: Pressure
+  id: pres
+  internal: true  
+address: 0x77
+update_interval: $sensor_interval

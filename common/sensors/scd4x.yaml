@@ -1,0 +1,34 @@
+platform: scd4x
+co2:
+  name: CO2
+  id: CO2
+  filters:
+    - lambda: |-
+        float MIN_VALUE = 300.0;
+        float MAX_VALUE = 2500.0;
+        if (MIN_VALUE <= x && x <= MAX_VALUE) return x;
+        else return {};         
+temperature:
+  name: CO2 Temperature
+  id: CO2_temp
+  internal: true
+  filters:
+    - lambda: |-
+        float MIN_VALUE = -40.0;
+        float MAX_VALUE = 100.0;
+        if (MIN_VALUE <= x && x <= MAX_VALUE) return x;
+        else return {};      
+humidity:
+  name: CO2 Humidity
+  id: CO2_humid
+  internal: true
+  filters:
+    - lambda: |-
+        float MIN_VALUE = 0.0;
+        float MAX_VALUE = 100.0;
+        if (MIN_VALUE <= x && x <= MAX_VALUE) return x;
+        else return {};      
+altitude_compensation: 150m
+#ambient_pressure_compensation_source: pres
+address: 0x62
+update_interval: $sensor_interval
