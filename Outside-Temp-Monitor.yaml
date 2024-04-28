@@ -1,0 +1,80 @@
+substitutions:
+  devicename: TempMonOutside
+  hostname: air-temp-outside
+  friendlyname: Outside Temp Monitor
+  location: Outside
+  floor: Outside
+  room: West
+  sensor_interval: 15s
+  mqtt_interval: 30s
+
+esphome:
+  name: ${hostname}
+  friendly_name: ${friendlyname}
+  platformio_options:
+    board_build.flash_mode: dio
+  area: ${room}
+  
+esp32:
+  board: seeed_xiao_esp32c3
+  variant: esp32c3
+  framework:
+    type: arduino
+
+<<: !include common/logger.yaml
+<<: !include common/web_server.yaml
+<<: !include common/wifi.yaml
+<<: !include common/time.yaml
+<<: !include common/packages.yaml
+<<: !include common/mqtt.yaml
+<<: !include common/time.yaml
+<<: !include common/api.yaml
+<<: !include common/ota.yaml
+
+button:
+  - platform: restart
+    name: Restart
+
+i2c:
+  sda: 6
+  scl: 7
+  scan: true
+  id: bus_a
+
+sensor:
+  - !include common/sensors/wifi_sensor_db.yaml
+  - !include common/sensors/wifi_sensor_percent.yaml  
+  - !include common/sensors/sht3x.yaml
+
+  - platform: template
+    name: Humidity
+    id: humid
+    lambda: |-
+      return ( id(sht3xd_humid).state );
+    unit_of_measurement: "%"
+    icon: "mdi:water-percent"
+    device_class: "humidity"
+    state_class: "measurement"    
+    update_interval: $sensor_interval
+
+  - platform: template
+    name: Temperature
+    id: temp
+    lambda: |-
+      return ( id(sht3xd_temp).state );
+    unit_of_measurement: "°C"
+    icon: "mdi:thermometer"
+    device_class: "temperature"
+    state_class: "measurement"
+    update_interval: $sensor_interval
+
+#deep_sleep:
+#  id: deep_sleep_1
+  #run_duration: 30s
+  #sleep_duration: 5min
+
+text_sensor:
+  - !include common/sensors/wifi_text_sensors.yaml
+  - !include common/sensors/location_text_sensor.yaml
+  - !include common/sensors/floor_text_sensor.yaml
+  - !include common/sensors/room_text_sensor.yaml

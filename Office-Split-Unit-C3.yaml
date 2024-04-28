@@ -1,0 +1,144 @@
+substitutions:
+  devicename: OfficeSplitUnitC3
+  hostname: office-split-unit-c3
+  friendlyname: Office Split Unit C3
+  location: Inside
+  floor: 2ndfloor
+  room: Office
+  remote_temp_sensor: sensor.office_average_temperature
+
+esphome:
+  name: ${hostname}
+  friendly_name: ${friendlyname}  
+  area: ${room}
+  comment: Office C3 Testing
+
+esp32:
+  board: esp32-c3-devkitm-1 #m5stack-stamps3
+  framework:
+    type: esp-idf
+
+#<<: !include common/api.yaml
+<<: !include common/ota.yaml
+#<<: !include common/logger.yaml
+<<: !include common/web_server.yaml
+<<: !include common/wifi.yaml
+<<: !include common/packages.yaml
+#<<: !include common/mqtt.yaml
+<<: !include common/time.yaml
+#<<: !include common/mitsu-split-unit-stamp.yaml 
+#<<: !include common/mitsu-split-unit-stamp-cn105.yaml
+
+text_sensor:
+  - !include common/sensors/wifi_text_sensors.yaml
+  - !include common/sensors/location_text_sensor.yaml
+  - !include common/sensors/floor_text_sensor.yaml
+  - !include common/sensors/room_text_sensor.yaml
+
+api:
+  services:
+    - service: set_remote_temperature
+      variables:
+        temperature: float
+      then:
+        - lambda: 'id(splitunit).set_remote_temperature(temperature);'
+
+    - service: use_internal_temperature
+      then:
+        - lambda: 'id(splitunit).set_remote_temperature(0);'
+  encryption:
+    key: !secret api_key_1
+  reboot_timeout: 2min
+
+binary_sensor:
+  - platform: gpio
+    pin: 
+      number: 0
+      inverted: true
+    name: Button
+
+external_components:
+  - source: github://echavet/MitsubishiCN105ESPHome/v1.3
+    #github://disruptivepatternmaterial/MitsubishiCN105ESPHome
+    #github://echavet/MitsubishiCN105ESPHome
+    refresh: 1s
+
+uart:
+  id: HP_UART
+  baud_rate: 2400
+  tx_pin: 21
+  rx_pin: 20
+
+climate:
+  - platform: cn105
+    name: ${friendlyname}
+    id: splitunit
+    update_interval: 15s
+    compressor_frequency_sensor:
+      name: Compressor Frequency
+    vertical_vane_select:
+      name: Vertical Vane Orientation
+    horizontal_vane_select:
+      name: Horizontal Vane Orientation
+    remote_temperature_timeout: 30min
+    isee_sensor:
+      name: iSee Sensor
+    debounce_delay : 500ms
+#    supports:
+#      mode: ['HEAT_COOL', 'COOL', 'HEAT', 'DRY', 'FAN_ONLY']
+    stage_sensor:
+      name: Stage Sensor
+    sub_mode_sensor:
+      name: Sub Mode Sensor     
+    auto_sub_mode_sensor:
+      name: Auto Sub Mode Sensor
+      
+sensor:
+  - platform: homeassistant
+    name: Remote Temperature
+    id: room_temperature
+    entity_id: ${remote_temp_sensor}
+    on_value:
+      then:
+        #- lambda: 'id(splitunit).set_remote_temperature(x);'
+        - lambda: 'id(splitunit).set_remote_temperature((x-32.0) * 5.0/9.0);'
+
+  - !include common/sensors/wifi_sensor_db.yaml
+  - !include common/sensors/wifi_sensor_percent.yaml
+
+#  - platform: template
+#    name: Operating
+#    update_interval: 10s
+#    lambda: |-
+#      return(id(splitunit).is_operating());
+
+#  - platform: template
+#    name: Compressor Frequency
+#    update_interval: 10s
+#    lambda: |-
+#      return(id(splitunit).get_compressor_frequency());
+
+button:
+  - platform: restart
+    name: Restart
+
+logger:    
+  level: DEBUG
+  logs:
+    EVT_SETS : INFO
+    WIFI : INFO
+    MQTT : INFO
+    WRITE_SETTINGS : INFO
+    SETTINGS : INFO
+    STATUS : INFO
+    CN105Climate: WARN
+    CN105: INFO
+    climate: WARN
+    sensor: WARN
+    chkSum : INFO
+    WRITE : INFO
+    READ : INFO
+    ACK : INFO
+    Header: INFO
+    Decoder : DEBUG
+    CONTROL_WANTED_SETTINGS: INFO 

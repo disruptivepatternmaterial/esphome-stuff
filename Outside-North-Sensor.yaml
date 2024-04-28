@@ -1,0 +1,138 @@
+substitutions:
+  devicename: OutsideNorthSensor
+  hostname: outside-north-sensor
+  friendlyname: Outside North Sensor
+  location: Outside
+  floor: Outside
+  room: North
+  sensor_interval: 15s
+  mqtt_interval: 60s
+
+esphome:
+  name: ${hostname}
+  friendly_name: ${friendlyname}
+  includes: common/sensors/pm25_to_aqi_us.h
+  area: ${room}
+  #name_add_mac_suffix: true
+
+esp32:
+  board: featheresp32-s2
+  framework:
+    type: arduino
+    version: latest
+
+#ESPRESSIF-ESP32-S2
+#FLASH 4MB
+#PSRAM 8MB
+#SRAM 320 kB SRAM
+
+<<: !include common/logger.yaml
+<<: !include common/web_server.yaml
+<<: !include common/wifi.yaml
+<<: !include common/time.yaml
+<<: !include common/mqtt.yaml
+<<: !include common/api.yaml
+<<: !include common/ota.yaml
+
+#wifi:
+#  ssid: !secret wifi_ssid
+#  password: !secret wifi_password
+#  use_address: 192.168.50.189
+
+psram:
+
+i2c:
+  sda: 3
+  scl: 4
+  scan: true
+  id: bus_a
+
+button:
+  - platform: restart
+    name: Restart
+  - platform: template
+    name: "sps30 Force Clean"
+    entity_category: "config"
+    on_press:
+      then:
+      - sps30.start_fan_autoclean: particulate
+  - platform: template
+    name: "CO2 Force Manual Calibration"
+    entity_category: "config"
+    on_press:
+      then:
+        - scd4x.perform_forced_calibration:
+            value: !lambda 'return id(co2_cal).state;'
+ 
+text_sensor:
+  - !include common/sensors/wifi_text_sensors.yaml
+  - !include common/sensors/location_text_sensor.yaml
+  - !include common/sensors/floor_text_sensor.yaml
+  - !include common/sensors/room_text_sensor.yaml
+
+sensor:
+  - !include common/sensors/sps30.yaml
+  - !include common/sensors/scd4x.yaml
+  - !include common/sensors/aqi-pm2_5.yaml
+  - !include common/sensors/aqi-pm10_0.yaml
+  - !include common/sensors/wifi_sensor_db.yaml
+  - !include common/sensors/wifi_sensor_percent.yaml  
+  - !include common/sensors/sht3x.yaml
+
+  - platform: template
+    name: Humidity
+    id: humid
+    lambda: |-
+      return ( id(sht3xd_humid).state );
+    unit_of_measurement: "%"
+    icon: "mdi:water-percent"
+    device_class: "humidity"
+    state_class: "measurement"    
+    update_interval: $sensor_interval
+    accuracy_decimals: 4
+
+  - platform: template
+    name: Temperature
+    id: temp
+    lambda: |-
+      return ( id(sht3xd_temp).state );
+    unit_of_measurement: "°C"
+    icon: "mdi:thermometer"
+    device_class: "temperature"
+    state_class: "measurement"
+    update_interval: $sensor_interval
+    accuracy_decimals: 4
+
+  - platform: combination
+    type: kalman
+    name: Combined Temperature
+    process_std_dev: 0.001
+    sources:
+      - source: sht3xd_temp
+        error: 0.0
+      - source: CO2_temp
+        error: .97514
+    accuracy_decimals: 4
+
+
+  - platform: combination
+    type: kalman
+    name: Combined Humidity
+    process_std_dev: 0.001
+    sources:
+      - source: sht3xd_humid
+        error: 0.0
+      - source: CO2_humid
+        error: 0.0
+    accuracy_decimals: 4
+
+number:
+  - platform: template
+    name: "CO2 Calibration Value"
+    optimistic: true
+    min_value: 420
+    max_value: 1000
+    step: 1
+    id: co2_cal
+    icon: "mdi:molecule-co2"
+    entity_category: "config"
